@@ -1,0 +1,154 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background-color: #f5f5f5;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.container {
+    background-color: white;
+    padding: 2rem;
+    border-radius: 1rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 90%;
+    max-width: 500px;
+}
+
+.screen {
+    text-align: center;
+}
+
+.hidden {
+    display: none;
+}
+
+h1 {
+    color: #333;
+    margin-bottom: 2rem;
+    font-size: 1.8rem;
+}
+
+.input-group {
+    margin-bottom: 1.5rem;
+}
+
+label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #666;
+}
+
+.hint {
+    display: block;
+    color: #888;
+    font-size: 0.8rem;
+    margin-top: 0.3rem;
+}
+
+input[type="number"] {
+    width: 100%;
+    padding: 0.8rem;
+    font-size: 1.2rem;
+    border: 2px solid #ddd;
+    border-radius: 0.5rem;
+    text-align: center;
+}
+
+.warning-time-input {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.warning-time-input input {
+    flex: 1;
+}
+
+.remove-warning {
+    width: 2.5rem;
+    height: 2.5rem;
+    border: none;
+    background-color: #ff4444;
+    color: white;
+    border-radius: 0.5rem;
+    font-size: 1.5rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s;
+}
+
+.remove-warning:hover {
+    background-color: #ff0000;
+}
+
+#add-warning {
+    margin-top: 0.5rem;
+}
+
+.timer-controls {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.timer-controls button {
+    flex: 1;
+    margin-bottom: 0;
+}
+
+.primary-button, .secondary-button {
+    padding: 1rem 2rem;
+    font-size: 1.1rem;
+    border: none;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: transform 0.1s, background-color 0.2s;
+    width: 100%;
+    margin-bottom: 1rem;
+}
+
+.primary-button {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.secondary-button {
+    background-color: #f0f0f0;
+    color: #333;
+}
+
+.primary-button:hover, .secondary-button:hover {
+    transform: translateY(-2px);
+}
+
+.primary-button:active, .secondary-button:active {
+    transform: translateY(0);
+}
+
+#timer-display {
+    font-size: 4rem;
+    font-weight: bold;
+    color: #333;
+    margin: 2rem 0;
+    font-family: monospace;
+}
+
+@media (max-width: 480px) {
+    .container {
+        padding: 1rem;
+    }
+    
+    #timer-display {
+        font-size: 3rem;
+    }
+} 

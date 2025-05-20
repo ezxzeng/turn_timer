@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Board Game Timer</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <div id="setup-screen" class="screen">
+            <h1>Board Game Timer</h1>
+            <div class="input-group">
+                <label for="time-input">Set time per turn (minutes):</label>
+                <input type="number" id="time-input" min="1" max="60" value="5">
+            </div>
+            <div class="input-group">
+                <label>Warning times (seconds before end):</label>
+                <div id="warning-times-container">
+                    <div class="warning-time-input">
+                        <input type="number" class="warning-time" min="0" max="60" value="30">
+                        <button class="remove-warning" title="Remove warning">×</button>
+                    </div>
+                </div>
+                <button id="add-warning" class="secondary-button">Add Warning Time</button>
+                <small class="hint">Add multiple warnings to be notified at different times</small>
+            </div>
+            <button id="start-button" class="primary-button">Start Timer</button>
+        </div>
+        
+        <div id="timer-screen" class="screen hidden">
+            <div id="timer-display">05:00</div>
+            <div class="timer-controls">
+                <button id="pause-button" class="secondary-button">Pause</button>
+                <button id="reset-button" class="primary-button">Next Player</button>
+            </div>
+            <button id="back-button" class="secondary-button">Back to Setup</button>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html> 
