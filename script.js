@@ -18,7 +18,8 @@ class GameTimer {
         this.timerInterval = null;
         this.isPaused = false;
         
-        // Initialize speech synthesis
+        // Initialize audio context and speech synthesis
+        this.audioContext = null;
         this.speechSynthesis = window.speechSynthesis;
         
         this.bindEvents();
@@ -33,6 +34,42 @@ class GameTimer {
         
         // Add initial warning time input event listeners
         this.setupWarningTimeListeners();
+        
+        // Initialize audio on first user interaction
+        document.addEventListener('click', () => this.initializeAudio(), { once: true });
+    }
+    
+    initializeAudio() {
+        if (!this.audioContext) {
+            try {
+                this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                // Test audio
+                this.playTestSound();
+            } catch (e) {
+                console.error('Audio initialization failed:', e);
+            }
+        }
+    }
+    
+    playTestSound() {
+        if (!this.audioContext) return;
+        
+        try {
+            const oscillator = this.audioContext.createOscillator();
+            const gainNode = this.audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(this.audioContext.destination);
+            
+            oscillator.type = 'sine';
+            oscillator.frequency.setValueAtTime(440, this.audioContext.currentTime);
+            gainNode.gain.setValueAtTime(0.1, this.audioContext.currentTime);
+            
+            oscillator.start();
+            oscillator.stop(this.audioContext.currentTime + 0.1);
+        } catch (e) {
+            console.error('Test sound failed:', e);
+        }
     }
     
     setupWarningTimeListeners() {
@@ -79,6 +116,9 @@ class GameTimer {
     }
     
     startTimer() {
+        // Ensure audio is initialized
+        this.initializeAudio();
+        
         const minutes = parseInt(this.timeInput.value);
         const warningTimes = this.getWarningTimes();
         
@@ -182,56 +222,72 @@ class GameTimer {
     }
     
     playWarningSound() {
-        // Play a short beep
-        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-        const oscillator = audioContext.createOscillator();
-        const gainNode = audioContext.createGain();
+        if (!this.audioContext) {
+            this.initializeAudio();
+            if (!this.audioContext) return;
+        }
         
-        oscillator.connect(gainNode);
-        gainNode.connect(audioContext.destination);
-        
-        oscillator.type = 'sine';
-        oscillator.frequency.setValueAtTime(880, audioContext.currentTime);
-        gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
-        
-        oscillator.start();
-        oscillator.stop(audioContext.currentTime + 0.3);
-        
-        // Speak the remaining time
-        const utterance = new SpeechSynthesisUtterance(this.formatTimeForSpeech());
-        utterance.rate = 1.0;
-        utterance.pitch = 1.0;
-        utterance.volume = 1.0;
-        
-        // Cancel any ongoing speech
-        this.speechSynthesis.cancel();
-        
-        // Speak the time
-        this.speechSynthesis.speak(utterance);
+        try {
+            // Play a short beep
+            const oscillator = this.audioContext.createOscillator();
+            const gainNode = this.audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(this.audioContext.destination);
+            
+            oscillator.type = 'sine';
+            oscillator.frequency.setValueAtTime(880, this.audioContext.currentTime);
+            gainNode.gain.setValueAtTime(0.1, this.audioContext.currentTime);
+            
+            oscillator.start();
+            oscillator.stop(this.audioContext.currentTime + 0.3);
+            
+            // Speak the remaining time
+            const utterance = new SpeechSynthesisUtterance(this.formatTimeForSpeech());
+            utterance.rate = 1.0;
+            utterance.pitch = 1.0;
+            utterance.volume = 1.0;
+            
+            // Cancel any ongoing speech
+            this.speechSynthesis.cancel();
+            
+            // Speak the time
+            this.speechSynthesis.speak(utterance);
+        } catch (e) {
+            console.error('Warning sound failed:', e);
+        }
     }
     
     playAlarm() {
-        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-        const oscillator = audioContext.createOscillator();
-        const gainNode = audioContext.createGain();
+        if (!this.audioContext) {
+            this.initializeAudio();
+            if (!this.audioContext) return;
+        }
         
-        oscillator.connect(gainNode);
-        gainNode.connect(audioContext.destination);
-        
-        oscillator.type = 'sine';
-        oscillator.frequency.setValueAtTime(440, audioContext.currentTime);
-        gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
-        
-        oscillator.start();
-        oscillator.stop(audioContext.currentTime + 0.5);
-        
-        // Announce time's up
-        const utterance = new SpeechSynthesisUtterance("Time's up!");
-        utterance.rate = 1.0;
-        utterance.pitch = 1.0;
-        utterance.volume = 1.0;
-        
-        this.speechSynthesis.speak(utterance);
+        try {
+            const oscillator = this.audioContext.createOscillator();
+            const gainNode = this.audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(this.audioContext.destination);
+            
+            oscillator.type = 'sine';
+            oscillator.frequency.setValueAtTime(440, this.audioContext.currentTime);
+            gainNode.gain.setValueAtTime(0.1, this.audioContext.currentTime);
+            
+            oscillator.start();
+            oscillator.stop(this.audioContext.currentTime + 0.5);
+            
+            // Announce time's up
+            const utterance = new SpeechSynthesisUtterance("Time's up!");
+            utterance.rate = 1.0;
+            utterance.pitch = 1.0;
+            utterance.volume = 1.0;
+            
+            this.speechSynthesis.speak(utterance);
+        } catch (e) {
+            console.error('Alarm sound failed:', e);
+        }
     }
 }
 
