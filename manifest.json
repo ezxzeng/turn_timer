@@ -1,6 +1,6 @@
 {
-    "name": "Board Game Timer",
-    "short_name": "Game Timer",
+    "name": "Board Game Turn Timer",
+    "short_name": "Turn Timer",
     "description": "A timer for board games with warning sounds and visual alerts",
     "start_url": "/",
     "display": "standalone",

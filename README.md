@@ -1,4 +1,4 @@
-# Board Game Timer
+# Board Game Turn Timer
 
 A simple, elegant timer for board games that helps keep each player's turn within a set time limit. Perfect for games where you want to maintain a steady pace and ensure fair play.
 
