@@ -10,6 +10,7 @@ class GameTimer {
         this.timerDisplay = document.getElementById('timer-display');
         this.setupScreen = document.getElementById('setup-screen');
         this.timerScreen = document.getElementById('timer-screen');
+        this.darkModeToggle = document.getElementById('dark-mode-toggle');
         
         this.initialTime = 0;
         this.timeLeft = 0;
@@ -25,6 +26,9 @@ class GameTimer {
         this.speechQueue = [];
         this.isSpeaking = false;
         this.lastSpeechTime = 0;
+        
+        // Initialize dark mode from localStorage
+        this.initializeDarkMode();
         
         this.bindEvents();
     }
@@ -48,6 +52,9 @@ class GameTimer {
             console.error('Speech error:', event);
             this.processSpeechQueue();
         };
+        
+        // Add dark mode toggle event
+        this.darkModeToggle.addEventListener('click', () => this.toggleDarkMode());
     }
     
     initializeAudio() {
@@ -392,7 +399,7 @@ class GameTimer {
     
     updateBackgroundEffect() {
         if (this.timeLeft <= 15 && this.timeLeft > 0) {
-            // Calculate redness intensity (10% to 100%)
+            // Calculate opacity for the red flash (10% to 100%)
             const intensity = Math.min(1, (15 - this.timeLeft) / 10);
             const redIntensity = 0.1 + (intensity * 0.9); // Start at 10% and go up to 100%
             
@@ -413,6 +420,32 @@ class GameTimer {
         document.body.classList.remove('flash');
         document.querySelector('.container').classList.remove('flash');
         document.body.style.setProperty('--flash-intensity', '0.1');
+    }
+    
+    initializeDarkMode() {
+        const isDarkMode = localStorage.getItem('darkMode') === 'true';
+        if (isDarkMode) {
+            document.body.classList.add('dark-mode');
+            document.querySelector('.container').classList.add('dark-mode');
+            document.documentElement.style.setProperty('--bg-color', '#1a1a1a');
+            document.documentElement.style.setProperty('--container-bg', '#2d2d2d');
+        } else {
+            document.documentElement.style.setProperty('--bg-color', '#f5f5f5');
+            document.documentElement.style.setProperty('--container-bg', 'white');
+        }
+    }
+    
+    toggleDarkMode() {
+        const isDarkMode = document.body.classList.toggle('dark-mode');
+        document.querySelector('.container').classList.toggle('dark-mode');
+        if (isDarkMode) {
+            document.documentElement.style.setProperty('--bg-color', '#1a1a1a');
+            document.documentElement.style.setProperty('--container-bg', '#2d2d2d');
+        } else {
+            document.documentElement.style.setProperty('--bg-color', '#f5f5f5');
+            document.documentElement.style.setProperty('--container-bg', 'white');
+        }
+        localStorage.setItem('darkMode', isDarkMode);
     }
 }
 

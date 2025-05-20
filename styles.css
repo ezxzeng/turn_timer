@@ -17,6 +17,10 @@ body {
     backface-visibility: hidden;
 }
 
+body.dark-mode {
+    background-color: #1a1a1a;
+}
+
 body.flash {
     -webkit-animation: flash 1s infinite;
     animation: flash 1s infinite;
@@ -31,13 +35,19 @@ body.flash.time-up {
 }
 
 @-webkit-keyframes flash {
-    0%, 100% { background-color: #f5f5f5; }
-    50% { background-color: rgba(255, 0, 0, var(--flash-intensity, 0.1)); }
+    0%, 100% { background-color: var(--bg-color, #f5f5f5); }
+    50% { 
+        background-color: var(--bg-color, #f5f5f5);
+        box-shadow: inset 0 0 0 100vmax rgba(255, 0, 0, var(--flash-intensity, 0.1));
+    }
 }
 
 @keyframes flash {
-    0%, 100% { background-color: #f5f5f5; }
-    50% { background-color: rgba(255, 0, 0, var(--flash-intensity, 0.1)); }
+    0%, 100% { background-color: var(--bg-color, #f5f5f5); }
+    50% { 
+        background-color: var(--bg-color, #f5f5f5);
+        box-shadow: inset 0 0 0 100vmax rgba(255, 0, 0, var(--flash-intensity, 0.1));
+    }
 }
 
 .container {
@@ -51,6 +61,12 @@ body.flash.time-up {
     transition: background-color 0.5s ease;
     -webkit-backface-visibility: hidden;
     backface-visibility: hidden;
+    position: relative;
+}
+
+.container.dark-mode {
+    background-color: #2d2d2d;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
 }
 
 .container.flash {
@@ -67,13 +83,19 @@ body.flash.time-up {
 }
 
 @-webkit-keyframes containerFlash {
-    0%, 100% { background-color: white; }
-    50% { background-color: rgba(255, 0, 0, calc(var(--flash-intensity, 0.1) - 0.05)); }
+    0%, 100% { background-color: var(--container-bg, white); }
+    50% { 
+        background-color: var(--container-bg, white);
+        box-shadow: inset 0 0 0 100vmax rgba(255, 0, 0, calc(var(--flash-intensity, 0.1) - 0.05));
+    }
 }
 
 @keyframes containerFlash {
-    0%, 100% { background-color: white; }
-    50% { background-color: rgba(255, 0, 0, calc(var(--flash-intensity, 0.1) - 0.05)); }
+    0%, 100% { background-color: var(--container-bg, white); }
+    50% { 
+        background-color: var(--container-bg, white);
+        box-shadow: inset 0 0 0 100vmax rgba(255, 0, 0, calc(var(--flash-intensity, 0.1) - 0.05));
+    }
 }
 
 .screen {
@@ -195,6 +217,90 @@ input[type="number"] {
     color: #333;
     margin: 2rem 0;
     font-family: monospace;
+}
+
+.dark-mode-button {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 50%;
+    transition: background-color 0.2s;
+    z-index: 1;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.dark-mode-button:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+.dark-mode .dark-mode-button:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.dark-mode-button img {
+    width: 24px;
+    height: 24px;
+    transition: transform 0.3s ease;
+}
+
+.dark-mode-button:hover img {
+    transform: rotate(15deg);
+}
+
+.moon-icon {
+    display: block;
+}
+
+.sun-icon {
+    display: none;
+}
+
+.dark-mode .moon-icon {
+    display: none;
+}
+
+.dark-mode .sun-icon {
+    display: block;
+}
+
+/* Dark mode specific styles */
+.dark-mode h1 {
+    color: #fff;
+}
+
+.dark-mode label {
+    color: #ccc;
+}
+
+.dark-mode .hint {
+    color: #999;
+}
+
+.dark-mode input[type="number"] {
+    background-color: #3d3d3d;
+    border-color: #4d4d4d;
+    color: #fff;
+}
+
+.dark-mode .secondary-button {
+    background-color: #3d3d3d;
+    color: #fff;
+}
+
+.dark-mode .secondary-button:hover {
+    background-color: #4d4d4d;
+}
+
+.dark-mode #timer-display {
+    color: #fff;
 }
 
 @media (max-width: 480px) {
