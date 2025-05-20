@@ -271,6 +271,7 @@ input[type="number"] {
 
 .dark-mode .sun-icon {
     display: block;
+    filter: brightness(0) invert(1);
 }
 
 /* Dark mode specific styles */
