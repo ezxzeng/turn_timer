@@ -11,16 +11,28 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
+    -webkit-transition: background-color 0.5s ease;
     transition: background-color 0.5s ease;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
 }
 
 body.flash {
+    -webkit-animation: flash 1s infinite;
     animation: flash 1s infinite;
+    -webkit-animation-timing-function: ease-in-out;
+    animation-timing-function: ease-in-out;
 }
 
 body.flash.time-up {
+    -webkit-animation: none;
     animation: none;
     background-color: rgba(255, 0, 0, var(--flash-intensity, 1));
+}
+
+@-webkit-keyframes flash {
+    0%, 100% { background-color: #f5f5f5; }
+    50% { background-color: rgba(255, 0, 0, var(--flash-intensity, 0.1)); }
 }
 
 @keyframes flash {
@@ -35,16 +47,28 @@ body.flash.time-up {
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     width: 90%;
     max-width: 500px;
+    -webkit-transition: background-color 0.5s ease;
     transition: background-color 0.5s ease;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
 }
 
 .container.flash {
+    -webkit-animation: containerFlash 1s infinite;
     animation: containerFlash 1s infinite;
+    -webkit-animation-timing-function: ease-in-out;
+    animation-timing-function: ease-in-out;
 }
 
 .container.flash.time-up {
+    -webkit-animation: none;
     animation: none;
     background-color: rgba(255, 0, 0, calc(var(--flash-intensity, 1) - 0.05));
+}
+
+@-webkit-keyframes containerFlash {
+    0%, 100% { background-color: white; }
+    50% { background-color: rgba(255, 0, 0, calc(var(--flash-intensity, 0.1) - 0.05)); }
 }
 
 @keyframes containerFlash {
