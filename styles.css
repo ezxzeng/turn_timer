@@ -11,6 +11,21 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
+    transition: background-color 0.5s ease;
+}
+
+body.flash {
+    animation: flash 1s infinite;
+}
+
+body.flash.time-up {
+    animation: none;
+    background-color: rgba(255, 0, 0, var(--flash-intensity, 1));
+}
+
+@keyframes flash {
+    0%, 100% { background-color: #f5f5f5; }
+    50% { background-color: rgba(255, 0, 0, var(--flash-intensity, 0.1)); }
 }
 
 .container {
@@ -20,6 +35,21 @@ body {
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     width: 90%;
     max-width: 500px;
+    transition: background-color 0.5s ease;
+}
+
+.container.flash {
+    animation: containerFlash 1s infinite;
+}
+
+.container.flash.time-up {
+    animation: none;
+    background-color: rgba(255, 0, 0, calc(var(--flash-intensity, 1) - 0.05));
+}
+
+@keyframes containerFlash {
+    0%, 100% { background-color: white; }
+    50% { background-color: rgba(255, 0, 0, calc(var(--flash-intensity, 0.1) - 0.05)); }
 }
 
 .screen {

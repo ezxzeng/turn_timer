@@ -17,6 +17,7 @@ class GameTimer {
         this.playedWarnings = new Set();
         this.timerInterval = null;
         this.isPaused = false;
+        this.flashInterval = null;
         
         // Initialize audio context and speech synthesis
         this.audioContext = null;
@@ -242,6 +243,9 @@ class GameTimer {
         this.isPaused = false;
         this.updatePauseButton();
         this.updateDisplay();
+        // Remove time-up state
+        document.body.classList.remove('flash', 'time-up');
+        document.querySelector('.container').classList.remove('flash', 'time-up');
         this.startCountdown();
     }
     
@@ -277,6 +281,7 @@ class GameTimer {
             if (!this.isPaused) {
                 this.timeLeft--;
                 this.updateDisplay();
+                this.updateBackgroundEffect();
                 
                 // Check for warning sounds
                 if (this.warningTimes.has(this.timeLeft) && !this.playedWarnings.has(this.timeLeft)) {
@@ -288,6 +293,10 @@ class GameTimer {
                 if (this.timeLeft <= 0) {
                     this.playAlarm();
                     this.stopCountdown();
+                    // Keep the red background at full intensity
+                    document.body.style.setProperty('--flash-intensity', '1');
+                    document.body.classList.add('flash', 'time-up');
+                    document.querySelector('.container').classList.add('flash', 'time-up');
                 }
             }
         }, 1000);
@@ -297,6 +306,10 @@ class GameTimer {
         if (this.timerInterval) {
             clearInterval(this.timerInterval);
             this.timerInterval = null;
+        }
+        // Only stop the background effect if we're not at time's up
+        if (this.timeLeft > 0) {
+            this.stopBackgroundEffect();
         }
     }
     
@@ -375,6 +388,31 @@ class GameTimer {
         } catch (e) {
             console.error('Alarm sound failed:', e);
         }
+    }
+    
+    updateBackgroundEffect() {
+        if (this.timeLeft <= 15 && this.timeLeft > 0) {
+            // Calculate redness intensity (10% to 100%)
+            const intensity = Math.min(1, (15 - this.timeLeft) / 10);
+            const redIntensity = 0.1 + (intensity * 0.9); // Start at 10% and go up to 100%
+            
+            // Update the flash animation with the new intensity
+            document.body.style.setProperty('--flash-intensity', redIntensity);
+            
+            // Start flashing if not already
+            if (!document.body.classList.contains('flash')) {
+                document.body.classList.add('flash');
+                document.querySelector('.container').classList.add('flash');
+            }
+        } else {
+            this.stopBackgroundEffect();
+        }
+    }
+    
+    stopBackgroundEffect() {
+        document.body.classList.remove('flash');
+        document.querySelector('.container').classList.remove('flash');
+        document.body.style.setProperty('--flash-intensity', '0.1');
     }
 }
 
