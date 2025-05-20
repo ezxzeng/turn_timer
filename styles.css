@@ -220,7 +220,7 @@ input[type="number"] {
 }
 
 .dark-mode-button {
-    position: absolute;
+    position: fixed;
     top: 1rem;
     left: 1rem;
     background: none;
@@ -229,12 +229,14 @@ input[type="number"] {
     padding: 0.5rem;
     border-radius: 50%;
     transition: background-color 0.2s;
-    z-index: 1;
+    z-index: 1000;
     width: 40px;
     height: 40px;
     display: flex;
     align-items: center;
     justify-content: center;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
 }
 
 .dark-mode-button:hover {
