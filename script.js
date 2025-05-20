@@ -21,6 +21,9 @@ class GameTimer {
         // Initialize audio context and speech synthesis
         this.audioContext = null;
         this.speechSynthesis = window.speechSynthesis;
+        this.speechQueue = [];
+        this.isSpeaking = false;
+        this.lastSpeechTime = 0;
         
         this.bindEvents();
     }
@@ -37,6 +40,13 @@ class GameTimer {
         
         // Initialize audio on first user interaction
         document.addEventListener('click', () => this.initializeAudio(), { once: true });
+        
+        // Handle speech synthesis events
+        this.speechSynthesis.onend = () => this.processSpeechQueue();
+        this.speechSynthesis.onerror = (event) => {
+            console.error('Speech error:', event);
+            this.processSpeechQueue();
+        };
     }
     
     initializeAudio() {
@@ -45,6 +55,8 @@ class GameTimer {
                 this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
                 // Test audio
                 this.playTestSound();
+                // Test speech
+                this.speak("Timer ready");
             } catch (e) {
                 console.error('Audio initialization failed:', e);
             }
@@ -69,6 +81,92 @@ class GameTimer {
             oscillator.stop(this.audioContext.currentTime + 0.1);
         } catch (e) {
             console.error('Test sound failed:', e);
+        }
+    }
+    
+    speak(text) {
+        console.log('Attempting to speak:', text);
+        
+        // Add to queue
+        this.speechQueue.push(text);
+        
+        // If not currently speaking, start processing queue
+        if (!this.isSpeaking) {
+            this.processSpeechQueue();
+        }
+    }
+    
+    processSpeechQueue() {
+        if (this.speechQueue.length === 0) {
+            this.isSpeaking = false;
+            return;
+        }
+        
+        // Prevent too frequent speech
+        const now = Date.now();
+        if (now - this.lastSpeechTime < 1000) {
+            setTimeout(() => this.processSpeechQueue(), 1000);
+            return;
+        }
+        
+        this.isSpeaking = true;
+        const text = this.speechQueue.shift();
+        this.lastSpeechTime = now;
+        
+        try {
+            // Cancel any ongoing speech
+            this.speechSynthesis.cancel();
+            
+            const utterance = new SpeechSynthesisUtterance(text);
+            
+            // Try to use a voice that's available on iOS
+            const voices = this.speechSynthesis.getVoices();
+            console.log('Available voices:', voices.map(v => v.name));
+            
+            const preferredVoice = voices.find(voice => 
+                voice.name.includes('Samantha') || 
+                voice.name.includes('Karen') || 
+                voice.name.includes('Daniel')
+            );
+            
+            if (preferredVoice) {
+                utterance.voice = preferredVoice;
+                console.log('Using voice:', preferredVoice.name);
+            }
+            
+            utterance.rate = 1.0;
+            utterance.pitch = 1.0;
+            utterance.volume = 1.0;
+            
+            // iOS specific: ensure speech starts
+            utterance.onstart = () => {
+                console.log('Speech started:', text);
+                // Resume audio context if it was suspended
+                if (this.audioContext && this.audioContext.state === 'suspended') {
+                    this.audioContext.resume();
+                }
+            };
+            
+            utterance.onend = () => {
+                console.log('Speech ended:', text);
+                this.processSpeechQueue();
+            };
+            
+            utterance.onerror = (event) => {
+                console.error('Speech error:', event);
+                this.processSpeechQueue();
+            };
+            
+            // iOS specific: ensure speech synthesis is active
+            if (this.speechSynthesis.paused) {
+                this.speechSynthesis.resume();
+            }
+            
+            this.speechSynthesis.speak(utterance);
+        } catch (e) {
+            console.error('Speech failed:', e);
+            // If speech fails, try to process next item in queue
+            setTimeout(() => this.processSpeechQueue(), 1000);
         }
     }
     
@@ -182,6 +280,7 @@ class GameTimer {
                 
                 // Check for warning sounds
                 if (this.warningTimes.has(this.timeLeft) && !this.playedWarnings.has(this.timeLeft)) {
+                    console.log('Warning triggered at:', this.timeLeft);
                     this.playWarningSound();
                     this.playedWarnings.add(this.timeLeft);
                 }
@@ -243,16 +342,9 @@ class GameTimer {
             oscillator.stop(this.audioContext.currentTime + 0.3);
             
             // Speak the remaining time
-            const utterance = new SpeechSynthesisUtterance(this.formatTimeForSpeech());
-            utterance.rate = 1.0;
-            utterance.pitch = 1.0;
-            utterance.volume = 1.0;
-            
-            // Cancel any ongoing speech
-            this.speechSynthesis.cancel();
-            
-            // Speak the time
-            this.speechSynthesis.speak(utterance);
+            const timeText = this.formatTimeForSpeech();
+            console.log('Speaking warning time:', timeText);
+            this.speak(timeText);
         } catch (e) {
             console.error('Warning sound failed:', e);
         }
@@ -279,12 +371,7 @@ class GameTimer {
             oscillator.stop(this.audioContext.currentTime + 0.5);
             
             // Announce time's up
-            const utterance = new SpeechSynthesisUtterance("Time's up!");
-            utterance.rate = 1.0;
-            utterance.pitch = 1.0;
-            utterance.volume = 1.0;
-            
-            this.speechSynthesis.speak(utterance);
+            this.speak("Time's up!");
         } catch (e) {
             console.error('Alarm sound failed:', e);
         }
